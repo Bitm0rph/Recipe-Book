@@ -1,16 +1,22 @@
 import { Link } from "react-router-dom";
-import useFetch from "../../hooks/useFetch";
+import useFetch from "../hooks/useFetch";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 
-export default function Recipes() {
-  const { data: recipes = [], loading, error } = useFetch(`/api/recipes`);
+export default function Favorites() {
+  const [favs] = useLocalStorage("favs", []);
+  const idList = favs.join(",");
+  const { data: recipes = [], loading } = useFetch(
+    favs.length ? `/api/recipes?ids=${idList}` : null,
+    [idList]
+  );
 
-  if (loading) return <div className="animate-pulse p-4">Loading recipes…</div>;
-  if (error)   return <div className="text-red-500 p-4">Error loading recipes</div>;
+  if (!favs.length) return <div className="p-4">No favorites yet.</div>;
+  if (loading) return <div className="animate-pulse p-4">Loading favorites…</div>;
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">All Recipes</h1>
+      <h1 className="text-2xl font-bold mb-4">Your Favorites</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.map(r => (
           <Link

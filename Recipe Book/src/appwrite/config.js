@@ -16,6 +16,6 @@ export class DataService {
 
 }
 
-const authService = new AuthService();
+const authService = new DataService();
 
 export default authService;

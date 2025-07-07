@@ -4,7 +4,6 @@ export default function Footer() {
   return (
     <footer className="bg-white border-t mt-8">
       <div className="max-w-6xl mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Logo and about */}
         <div>
           <Link to="/" className="flex items-center mb-4">
             <img
@@ -58,7 +57,6 @@ export default function Footer() {
                 <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.43.64a9 9 0 0 1-2.83 1.08A4.48 4.48 0 0 0 16.88 0c-2.48 0-4.5 2.01-4.5 4.5 0 .35.04.69.11 1.02A12.8 12.8 0 0 1 1.67.9a4.48 4.48 0 0 0-.61 2.27c0 1.57.8 2.96 2.02 3.77A4.48 4.48 0 0 1 .96 6.1v.06c0 2.2 1.57 4.04 3.65 4.46a4.48 4.48 0 0 1-2.04.08 4.48 4.48 0 0 0 4.18 3.12A8.98 8.98 0 0 1 1 19.54 12.7 12.7 0 0 0 7.29 21c8.76 0 13.55-7.25 13.55-13.54l-.01-.62A9.68 9.68 0 0 0 23 3z"/>
               </svg>
             </a>
-            {/* add more icons as needed */}
           </div>
         </div>
       </div>

@@ -1,16 +1,53 @@
 // src/components/Header.jsx
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import Container from "../container/container";
+import LogoutBtn from "./Logout";
+import { useSelector } from "react-redux";
 
-const navItems = [
-  { to: "/", label: "Home" },
-  { to: "/recipes", label: "Recipes" },
-  { to: "/categories", label: "Categories" },
-  { to: "/favorites", label: "Favorites" },
-];
+
 
 export default function Header() {
+  const authStatus = useSelector((state) => state.auth.status)
+
+  const navigate = useNavigate()
+
+  const navItems = [
+    {
+      name: "Home",
+      to: "/",
+      active: true
+    },
+    {
+      name: "Login",
+      to: "/login",
+      active: !authStatus
+    },
+    {
+      name: "Signup",
+      to: "/signup",
+      active: !authStatus
+    },
+    {
+      name: "Recipes",
+      to: "/recipes",
+      active: authStatus
+    },
+    {
+      name: "Categories",
+      to: "/categories",
+      active: authStatus
+    },
+    {
+      name: "Favorites",
+      to: "/favorites",
+      active: authStatus
+    }
+  ];
+
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-white shadow z-50">
+      <Container>
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Left: logo */}
         <NavLink to="/">
@@ -51,6 +88,7 @@ export default function Header() {
           </NavLink>
         </div>
       </div>
+      </Container>
     </header>
   );
 }
