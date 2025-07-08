@@ -45,50 +45,59 @@ export default function Header() {
   ];
 
 
-  return (
-    <header className="fixed top-0 left-0 right-0 bg-white shadow z-50">
-      <Container>
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-        {/* Left: logo */}
-        <NavLink to="/">
-          <img src="https://alexharkness.com/wp-content/uploads/2020/06/logo-2.png" alt="Logo" className="h-10" />
-        </NavLink>
+return (
+  <header className="bg-white shadow-md">
+    <Container>
+      <nav className="flex items-center py-4">
+        {/* Logo */}
+        <Link to="/" className="flex-shrink-0 ">
+          <img
+            src="https://alexharkness.com/wp-content/uploads/2020/06/logo-2.png"
+            alt="Logo"
+            className="h-10"
+          />
+        </Link>
 
-        {/* Center: main nav */}
-        <nav className="hidden md:flex space-x-8">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end
-              className={({ isActive }) =>
-                `text-lg font-medium ${
-                  isActive ? "text-orange-600" : "text-gray-700 hover:text-orange-500"
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+        {/* Navigation items */}
+        <ul className="flex space-x-4 flex-grow justify-center">
+          {navItems.map((item) =>
+            item.active ? (
+              <li key={item.name}>
+                <button
+                  onClick={() => navigate(item.to)}
+                  className="px-4 py-2 rounded-full text-gray-700 hover:bg-blue-50 focus:bg-blue-100 focus:outline-none transition"
+                >
+                  {item.name}
+                </button>
+              </li>
+            ) : null
+          )}
+        </ul>
 
-        {/* Right: auth links */}
-        <div className="flex space-x-4">
-          <NavLink
-            to="/login"
-            className="text-gray-700 hover:text-gray-900"
-          >
-            Log in
-          </NavLink>
-          <NavLink
-            to="/signup"
-            className="bg-orange-600 text-white px-4 py-1 rounded hover:bg-orange-700"
-          >
-            Sign Up
-          </NavLink>
+        {/* Auth/logout */}
+        <div className="flex items-center space-x-4">
+          {authStatus ? (
+            <LogoutBtn />
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-gray-700 hover:text-gray-900 transition"
+              >
+                Log in
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 transition"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
-      </div>
-      </Container>
-    </header>
-  );
+      </nav>
+    </Container>
+  </header>
+);
+
 }
