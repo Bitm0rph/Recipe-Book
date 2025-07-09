@@ -31,7 +31,7 @@ export default function CategoryDetail() {
   if (error)   return <div className="p-4 text-red-500">Error loading recipes</div>;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
         Recipes in “{categoryName}”
       </h1>
@@ -40,7 +40,7 @@ export default function CategoryDetail() {
           <Link
             key={r.$id}
             to={`/recipes/${r.$id}`}
-            className="block bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden"
+            className="block bg-white border rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden"
           >
             {r.image && (
               <img

@@ -15,6 +15,10 @@ import AuthLayout from './components/AuthLayout.jsx';
 import App from './App.jsx';
 import RecipeDetail from './pages/RecipeDetail.jsx';
 import CategoryDetail from './pages/CategoryDetail.jsx';
+import About from './components/AboutUs.jsx';
+import Contact from './components/ContactUs.jsx';
+import PrivacyPolicy from './components/PrivacyPolicy.jsx';
+import TermsOfService from './components/TermsOfService.jsx';
 
 
 const router = createBrowserRouter([
@@ -86,6 +90,42 @@ const router = createBrowserRouter([
                     <CategoryDetail />
                 </AuthLayout>
             ),
+        },
+        {
+            path: "/about",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <About />
+                </AuthLayout>
+            )
+        },
+        {
+            path: "/contact",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <Contact />
+                </AuthLayout>
+            )
+        },
+        {
+            path: "/privacy",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <PrivacyPolicy />
+                </AuthLayout>
+            )
+        },
+        {
+            path: "/terms",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <TermsOfService />
+                </AuthLayout>
+            )
         }
     ]
 }

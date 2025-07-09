@@ -48,9 +48,9 @@ export default function Header() {
 return (
   <header className="bg-white shadow-md">
     <Container>
-      <nav className="flex items-center py-4">
+      <nav className="flex items-center py-4 justify-center space-x-8">
         {/* Logo */}
-        <Link to="/" className="flex-shrink-0 ">
+        <Link to="/" className="flex-shrink-0 absolute left-4">
           <img
             src="https://alexharkness.com/wp-content/uploads/2020/06/logo-2.png"
             alt="Logo"
@@ -60,26 +60,31 @@ return (
 
         {/* Navigation items */}
         <ul className="flex space-x-4 flex-grow justify-center">
-          {navItems.map((item) =>
-            item.active ? (
-              <li key={item.name}>
-                <button
-                  onClick={() => navigate(item.to)}
-                  className="px-4 py-2 rounded-full text-gray-700 hover:bg-blue-50 focus:bg-blue-100 focus:outline-none transition"
-                >
-                  {item.name}
-                </button>
-              </li>
-            ) : null
-          )}
+        {navItems.map(item =>
+          item.active ? (
+            <li key={item.name}>
+              <NavLink
+                to={item.to}
+                end={item.to === '/'}              // exact match on “Home”
+                className={({ isActive }) =>
+                  `px-4 py-2 rounded-full transition ${
+                    isActive
+                      ? 'bg-blue-500 text-white'  // Active style
+                      : 'text-gray-700 hover:bg-blue-50'
+                  }`
+                }
+              >
+                {item.name}
+              </NavLink>
+            </li>
+          ) : null
+        )}
         </ul>
 
         {/* Auth/logout */}
         <div className="flex items-center space-x-4">
             {authStatus && (
-              <li>
                 <LogoutBtn />
-              </li>
             )}
         </div>
       </nav>

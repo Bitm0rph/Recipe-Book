@@ -27,7 +27,7 @@ export default function Categories() {
   );
 
   return (
-    <div className="p-6">
+    <div className="p-6 ">
       <h1 className="text-3xl font-bold mb-4">Categories</h1>
 
       {/* Search input */}

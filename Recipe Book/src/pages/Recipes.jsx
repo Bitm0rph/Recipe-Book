@@ -56,7 +56,7 @@ export default function Recipes() {
   if (error)   return <div className="text-red-500 p-4 text-center">Error loading recipes</div>;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">All Recipes</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {recipes.map(r => {
@@ -64,7 +64,7 @@ export default function Recipes() {
           return (
             <div
               key={r.$id}
-              className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer"
+              className="relative bg-white border rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer"
               onClick={() => navigate(`/recipes/${r.$id}`)}
             >
               {/* Favorite Button */}
@@ -83,23 +83,14 @@ export default function Recipes() {
                 />
               )}
 
-              <div className="p-4">
-                <h2 className="mt-2 text-xl font-semibold text-gray-900">{r.title}</h2>
-                <p className="mt-3 text-gray-700 text-sm">
-                  {r.description?.length > 100
-                    ? `${r.description.slice(0, 100)}...`
-                    : r.description}
-                </p>
-                <div className="mt-4 flex items-center justify-between">
-                  <button
-                    className="text-indigo-500 text-sm font-medium hover:underline"
-                    onClick={e => {
-                      e.stopPropagation();
-                      navigate(`/recipes/${r.$id}`);
-                    }}
-                  >
-                    Read more →
-                  </button>
+              <div className="p-4 flex flex-col h-full">
+                <div>
+                  <h2 className="mt-2 text-xl font-semibold text-gray-900">{r.title}</h2>
+                  <p className="mt-3 text-gray-700 text-sm">
+                    {r.description?.length > 100
+                      ? `${r.description.slice(0, 100)}...`
+                      : r.description}
+                  </p>
                 </div>
               </div>
             </div>

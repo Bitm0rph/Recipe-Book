@@ -39,7 +39,7 @@ export default function Favorites() {
   if (error)   return <div className="p-4 text-red-500">Error loading favorites</div>;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">My Favorites</h1>
 
       {favorites.length === 0 ? (
@@ -50,7 +50,7 @@ export default function Favorites() {
             <Link
               key={r.$id}
               to={`/recipes/${r.$id}`}
-              className="block bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden"
+              className="block bg-white border rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden"
             >
               {r.image && (
                 <img
@@ -66,17 +66,6 @@ export default function Favorites() {
                     ? `${r.description.slice(0, 100)}...`
                     : r.description}
                 </p>
-                <div className="mt-4 flex items-center justify-between">
-                  <button
-                    className="text-indigo-500 text-sm font-medium hover:underline"
-                    onClick={e => {
-                      e.stopPropagation();
-                      navigate(`/recipes/${r.$id}`);
-                    }}
-                  >
-                    Read more →
-                  </button>
-                </div>
               </div>
             </Link>
           ))}
