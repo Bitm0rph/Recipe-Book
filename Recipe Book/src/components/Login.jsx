@@ -28,8 +28,8 @@ function Login() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-white px-4 py-12">
-          <div className="w-full max-w-lg bg-gray-200 rounded-xl p-10 shadow-lg ">
+        <div className="flex items-center justify-center min-h-screen bg-gray-200 px-4 py-12">
+          <div className="w-full max-w-lg bg-gray-400 rounded-xl p-10 shadow-lg ">
             
             <h2 className="text-center text-2xl font-bold text-gray-800">Log in to your account</h2>
             <p className="mt-2 text-center text-sm text-gray-600">

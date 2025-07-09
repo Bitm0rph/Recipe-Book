@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 export default function Home() {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-200">
         <section className="pt-32 text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Find Your Next Favorite Recipe
