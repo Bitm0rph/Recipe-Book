@@ -40,7 +40,7 @@ export default function Footer() {
         <div className="col-span-1">
           <h3 className="text-gray-800 font-semibold mb-2 uppercase text-sm">Legal</h3>
           <ul className="space-y-1 text-gray-600 text-sm">
-            <li><Link to="/privacy-policy" className="hover:text-gray-800">Privacy Policy</Link></li>
+            <li><Link to="/privacy" className="hover:text-gray-800">Privacy Policy</Link></li>
             <li><Link to="/terms"          className="hover:text-gray-800">Terms of Service</Link></li>
           </ul>
         </div>
