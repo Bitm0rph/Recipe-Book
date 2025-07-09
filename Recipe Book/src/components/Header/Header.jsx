@@ -76,24 +76,11 @@ return (
 
         {/* Auth/logout */}
         <div className="flex items-center space-x-4">
-          {authStatus ? (
-            <LogoutBtn />
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="text-gray-700 hover:text-gray-900 transition"
-              >
-                Log in
-              </Link>
-              <Link
-                to="/signup"
-                className="bg-orange-600 text-white px-4 py-2 rounded-full hover:bg-orange-700 transition"
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
+            {authStatus && (
+              <li>
+                <LogoutBtn />
+              </li>
+            )}
         </div>
       </nav>
     </Container>

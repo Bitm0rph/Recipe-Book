@@ -1,7 +1,7 @@
-import { StrictMode } from 'react'
+import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { UserProvider } from './contexts/UserContext';
+// import { UserProvider } from './contexts/UserContext';
 import './index.css'
 import Home from './pages/Home.jsx'
 import Favorites from './pages/Favorites.jsx'
@@ -13,6 +13,8 @@ import { Provider } from 'react-redux';
 import store from './store/store.js';
 import AuthLayout from './components/AuthLayout.jsx';
 import App from './App.jsx';
+import RecipeDetail from './pages/RecipeDetail.jsx';
+import CategoryDetail from './pages/CategoryDetail.jsx';
 
 
 const router = createBrowserRouter([
@@ -40,48 +42,60 @@ const router = createBrowserRouter([
                 </AuthLayout>
             ),
         },
-        // {
-        //     path: "/all-posts",
-        //     element: (
-        //         <AuthLayout authentication>
-        //             {" "}
-        //             <AllPosts />
-        //         </AuthLayout>
-        //     ),
-        // },
-        // {
-        //     path: "/add-post",
-        //     element: (
-        //         <AuthLayout authentication>
-        //             {" "}
-        //             <AddPost />
-        //         </AuthLayout>
-        //     ),
-        // },
-        // {
-        //     path: "/edit-post/:slug",
-        //     element: (
-        //         <AuthLayout authentication>
-        //             {" "}
-        //             <EditPost />
-        //         </AuthLayout>
-        //     ),
-        // },
-        // {
-        //     path: "/post/:slug",
-        //     element: <Post />,
-        // },
+        {
+            path: "/recipes",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <Recipes />
+                </AuthLayout>
+            ),
+        },
+        {
+            path: "/favorites",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <Favorites />
+                </AuthLayout>
+            ),
+        },
+        {
+            path: "/categories",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <Categories />
+                </AuthLayout>
+            ),
+        },
+        {
+            path: "/recipes/:id",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <RecipeDetail />
+                </AuthLayout>
+            ),
+        },
+        {
+            path: "/categories/:id",
+            element: (
+                <AuthLayout authentication>
+                    {" "}
+                    <CategoryDetail />
+                </AuthLayout>
+            ),
+        }
     ]
 }
 ])
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Provider store={store}>
-    <UserProvider>
-       <RouterProvider router={router}/>
-     </UserProvider>
-    </Provider>
-  </StrictMode>,
+    <StrictMode>
+        <Provider store={store}>
+            <RouterProvider router={router}/>
+        </Provider>
+    </StrictMode>,
 )
