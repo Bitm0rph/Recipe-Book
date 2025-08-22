@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);    // will always be an array
-  const [filterText, setFilterText] = useState('');    // your search string
+  const [filterText, setFilterText] = useState('');    // search string
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
 
