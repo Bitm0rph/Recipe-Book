@@ -3,10 +3,41 @@ const { Schema, model } = mongoose;
 
 
 const userSchema = new Schema({
-name: { type: String, required: true},
-email: { type: String, required: true, unique: true, lowercase: true },
-password: { type: String, required: true }
-},{timestamps:true});
+    username: {
+        type: String,
+        required: true,
+        unique: [true, 'username is required'],
+        lowercase: true,
+        trim: true,
+        index: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: [true, 'email is required'],
+        lowercase: true,
+        trim: true
+    },
+    avatar: {
+        type: String
+    },
+    coverImage: {
+        type: String
+    },
+    watchHistory: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Recipe"
+        }
+    ],
+    password: {
+        type: String,
+        required: [true, 'password is required']
+    },
+    refreshToken: {
+        type: String
+    }
+}, { timestamps: true });
 
 
 export default model('User', userSchema);
