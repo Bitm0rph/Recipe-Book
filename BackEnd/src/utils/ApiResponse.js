@@ -3,8 +3,8 @@
 class ApiResponse extends Error{
     constructor(
         statusCode,
-        message = "Success",
-        data
+        data,
+        message = "Success"
     ){
         this.statusCode = statusCode
         this.message = message

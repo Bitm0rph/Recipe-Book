@@ -47,7 +47,7 @@ userSchema.pre("save", async function (next) {
     if(!this.isModified("password")) return next();
 
     const rounds = 10
-    this.password = bcrypt.hash(this.password,rounds)
+    this.password = await bcrypt.hash(this.password,rounds)
     next()
 })
 
@@ -81,4 +81,12 @@ userSchema.methods.generateRefreshToken = function(){
         }
     )
 }
-export default model('User', userSchema);
+const User = model('User', userSchema);
+
+export default User
+
+
+
+// If exported using 'export const', then it must be imported using curly braces
+// But if exported using 'export default', then it must not be imported using curly braces
+// export default User = model('User', userSchema); // this is invalid syntax
