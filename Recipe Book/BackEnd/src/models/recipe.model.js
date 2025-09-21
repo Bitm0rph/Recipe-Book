@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
-
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"
 
 const ingredientSchema = new Schema({
     name: {
@@ -69,5 +69,6 @@ const recipeSchema = new Schema({
     tags: [String],
 }, { timestamps: true });
 
+recipeSchema.plugin(mongooseAggregatePaginate)
 
 export default model('Recipe', recipeSchema);
