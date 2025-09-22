@@ -1,25 +1,29 @@
 import jwt from 'jsonwebtoken';
+import { asyncHandler } from '../utils/asyncHandler.js';
 import dotenv from 'dotenv';
+import { ApiError } from '../utils/ApiError.js';
+import User from '../models/user.model.js';
+
 dotenv.config();
 
-export default function auth(req, res, next) {
-    const authHeader = req.header("Authorization");
-    console.log(authHeader);
-    if (!authHeader) {
-        return res.status(401).json({ message: "No token, authorization denied" });
-    }
-
-    // Expect "Bearer <token>"
-    const token = authHeader.split(" ")[1];
-    if (!token) {
-        return res.status(401).json({ message: "No token provided" });
-    }
-
+export const verifyJWT = asyncHandler(async (req,res,next) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        res.status(401).json({ message: "Token is not valid" });
+        const token = (req.cookies?.accessToken) || (req.header("Authorization")?.replace("Bearer ",""))
+    
+        if(!token) {
+            throw new ApiError(401,"Unauthorized request")
+        }
+    
+        const decodedToken = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
+    
+        const user = await User.findById(decodedToken?._id).select("-password -refreshToken")
+    
+        if(!user) {
+            throw new ApiError(401,"Authorization denied")
+        }
+        req.user = user;
+        next()
+    } catch (error) {
+        throw new ApiError(401, error.message)
     }
-}
+})

@@ -1,6 +1,6 @@
 import express from 'express';
 import Recipe from '../models/recipe.model.js';
-import auth from '../middlewares/auth.middleware.js';
+import {verifyJWT as auth} from '../middlewares/auth.middleware.js';
 
 
 const router = express.Router();
