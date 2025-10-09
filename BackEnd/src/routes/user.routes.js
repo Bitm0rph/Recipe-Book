@@ -1,5 +1,5 @@
 import express from 'express';
-import { login, logout, refreshAccessToken, register } from '../controllers/user.controller.js';
+import { getCurrentUser, login, logout, refreshAccessToken, register } from '../controllers/user.controller.js';
 import { upload } from "../middlewares/multer.middleware.js"
 import { verifyJWT } from '../middlewares/auth.middleware.js';
 
@@ -16,12 +16,13 @@ router.route("/register").post(
             name: "coverImage",
             maxCount: 1
         }
-    ]),
-    register)
+    ]),register
+)
 
 
 router.route("/login").post(login)
 
+router.route("/auth/me").get(verifyJWT, getCurrentUser)
 
 // secured routes
 router.route("/logout").post(verifyJWT, logout)

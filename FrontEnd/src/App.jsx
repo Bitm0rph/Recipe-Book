@@ -4,6 +4,7 @@ import { login, logout } from "./store/authSlice";
 import Header from "./components/Header/Header";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer/Footer";
+import axios from "axios";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ function App() {
     const token = localStorage.getItem("token");
 
     if (token) {
-      fetch("/server/api/auth/me", {
+      fetch("/server/api/v1/users/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -18,7 +18,7 @@ export default function AuthLayout({ children, authentication = true }) {
         const token = localStorage.getItem("token");
         if (token) {
           // 2. Verify token with backend
-          const res = await axios.get("http://localhost:3000/api/auth/me", {
+          const res = await axios.get("/server/api/v1/users/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
 
