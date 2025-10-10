@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from "cookie-parser"
-import authRoutes from './routes/user.routes.js';
-import recipeRoutes from './routes/recipes.routes.js';
 
 const app = express();
 
@@ -22,9 +20,15 @@ app.get('/',(req,res) => {
 
 // import routes
 import userRouter from './routes/user.routes.js'
+import recipeRoutes from './routes/recipes.routes.js'
+import categoryRoutes from './routes/categories.routes.js';
+import favoritesRoutes from './routes/favorites.routes.js';
 
 // declaration of routes
 app.use("/api/v1/users",userRouter)
+app.use("/api/v1/recipes",recipeRoutes)
+app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/favorites", favoritesRoutes);
 
 
 export {app}

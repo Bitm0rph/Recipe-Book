@@ -10,6 +10,7 @@ class ApiResponse extends Error{
         this.statusCode = statusCode
         this.message = message
         this.data = data
+        this.user = data;
         this.success = statusCode < 400
     }
 }

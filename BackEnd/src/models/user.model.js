@@ -25,19 +25,19 @@ const userSchema = new Schema({
     coverImage: {
         type: String
     },
-    watchHistory: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Recipe"
-        }
-    ],
     password: {
         type: String,
         required: [true, 'password is required']
     },
     refreshToken: {
         type: String
-    }
+    },
+    favorites: [
+        { 
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Recipe' 
+        }
+    ]
 }, { timestamps: true });
 
 

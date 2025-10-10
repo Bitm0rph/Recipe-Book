@@ -1,67 +1,62 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getCategories } from "../services/categories";
+import { useNavigate } from "react-router-dom";
+import { getRecipes } from "../services/recipes";
 
 export default function Categories() {
-  const [categories, setCategories] = useState([]); // always an array
-  const [filterText, setFilterText] = useState(""); // search string
+  const [categories, setCategories] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
-    getCategories()
-      .then((res) => {
-        setCategories(res); // res is array from backend
-      })
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
+    const fetchRecipes = async () => {
+      setLoading(true);
+      try {
+        const data = await getRecipes();
+        const catObj = {};
+        (data.data || data).forEach((r) => {
+          r.tags?.forEach((tag) => {
+            if (!catObj[tag]) catObj[tag] = [];
+            catObj[tag].push(r);
+          });
+        });
+        setCategories(catObj);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipes();
   }, []);
 
-  if (loading)
-    return <div className="p-4 text-center">Loading categories…</div>;
-  if (error)
-    return (
-      <div className="p-4 text-red-500">Error loading categories</div>
-    );
-
-  // Filter safely—categories is always an array
-  const filtered = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(filterText.toLowerCase())
-  );
+  if (loading) return <div className="p-4 text-center animate-pulse">Loading categories…</div>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Categories</h1>
+    <div className="p-6 bg-gray-200 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Categories</h1>
 
-      {/* Search input */}
-      <input
-        type="text"
-        placeholder="Search categories…"
-        className="mb-6 w-full max-w-md px-4 py-2 border rounded-lg focus:outline-none focus:ring"
-        value={filterText}
-        onChange={(e) => setFilterText(e.target.value)}
-      />
-
-      {filtered.length === 0 ? (
-        <p className="text-gray-600">
-          {filterText
-            ? `No categories match “${filterText}”.`
-            : "No categories available."}
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {filtered.map((cat) => (
-            <Link
-              key={cat._id} // Mongo uses _id, not $id
-              to={`/categories/${cat._id}`}
-              className="block bg-indigo-100 text-indigo-800 rounded-xl p-3 text-center hover:bg-indigo-200 transition"
-            >
-              {cat.name}
-            </Link>
-          ))}
+      {Object.keys(categories).map((cat) => (
+        <div key={cat} className="mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-700">{cat}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories[cat].map((r) => (
+              <div
+                key={r._id}
+                className="bg-white border rounded-2xl shadow-lg hover:shadow-2xl cursor-pointer overflow-hidden"
+                onClick={() => navigate(`/recipes/${r._id}`)}
+              >
+                {r.imageUrl && <img src={r.imageUrl} alt={r.title} className="w-full h-48 object-cover" />}
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold text-gray-900">{r.title}</h3>
+                  <p className="text-gray-700 text-sm mt-2">
+                    {r.description?.length > 100 ? `${r.description.slice(0, 100)}...` : r.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }

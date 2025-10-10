@@ -4,38 +4,45 @@ import { login, logout } from "./store/authSlice";
 import Header from "./components/Header/Header";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer/Footer";
-import axios from "axios";
+import API from "./api";
 
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
 
-    if (token) {
-      fetch("/server/api/v1/users/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Auth failed");
-          return res.json();
-        })
-        .then((data) => {
-          dispatch(login({ userData: data.user, token }));
-        })
-        .catch(() => dispatch(logout()))
-        .finally(() => setLoading(false));
-    } else {
-      dispatch(logout());
-      setLoading(false);
-    }
+      if (!token) {
+        dispatch(logout());
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await API.get("/auth/me");
+
+        if (res.data && res.data.success) {
+          dispatch(login({ userData: res.data.user, token }));
+        } else {
+          dispatch(logout());
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error.response?.data || error.message);
+        dispatch(logout());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, [dispatch]);
 
-  return !loading ? (
-    <div className="min-h-screen flex flex-wrap content-between ">
+  if (loading) return <div className="text-center mt-10 text-lg">Loading...</div>;
+
+  return (
+    <div className="min-h-screen flex flex-wrap content-between">
       <div className="w-full block">
         <Header />
         <main>
@@ -44,7 +51,7 @@ function App() {
         <Footer />
       </div>
     </div>
-  ) : null;
+  );
 }
 
 export default App;

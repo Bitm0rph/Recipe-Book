@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', auth, async (req, res) => {
     try {
         const { title, description, ingredients, steps, imageUrl, tags } = req.body;
-        const recipe = new Recipe({ title, description, ingredients, steps, imageUrl, tags, author: req.user.id });
+        const recipe = new Recipe({ title, description, ingredients, steps, imageUrl, tags, author: req.user._id });
         await recipe.save();
         res.status(201).json(recipe);
     } catch (err) {

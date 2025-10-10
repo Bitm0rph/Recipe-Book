@@ -226,7 +226,9 @@ export const changePassword = asyncHandler(async (req,res) => {
 export const getCurrentUser = asyncHandler(async (req,res) => {
     return res
     .status(200)
-    .json(200, req.user, "Current user")
+    .json(
+        new ApiResponse(200, req.user, "Current user")
+    );
 })
 
 export const updateDetails = asyncHandler(async (req,res) => {
