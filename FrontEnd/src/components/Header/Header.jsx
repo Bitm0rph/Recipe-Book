@@ -1,15 +1,11 @@
 // src/components/Header.jsx
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Container from "../container/container";
 import LogoutBtn from "./Logout";
 import { useSelector } from "react-redux";
 
-
-
 export default function Header() {
   const authStatus = useSelector((state) => state.auth.status)
-
-  const navigate = useNavigate()
 
   const navItems = [
     {

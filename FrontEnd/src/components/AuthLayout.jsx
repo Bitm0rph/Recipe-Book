@@ -1,40 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login as setAuth } from "../store/authSlice";
-import API from "../api.js";
 
 export default function AuthLayout({ children, authentication = true }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [loader, setLoader] = useState(true);
-
+  const authStatus = useSelector((state) => state.auth.status);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      let isLoggedIn = false;
-  
-      if (token) {
-        // only hit the API on initial load
-        const res = await API.get("/auth/me");
-        if (res.data.success) {
-          dispatch(setAuth({ status: true, user: res.data.user }));
-          isLoggedIn = true;
-        } else {
-          dispatch(setAuth({ status: false, user: null }));
-        }
-      } else {
-        dispatch(setAuth({ status: false, user: null }));
-      }
-  
-      if (authentication && !isLoggedIn) navigate("/login");
-      if (!authentication && isLoggedIn) navigate("/");
-    };
-  
-    checkAuth();
-  }, [navigate, authentication, dispatch]);
-  
+    if (authentication && authStatus !== authentication) {
+      navigate("/login");
+    } else if (!authentication && authStatus !== authentication) {
+      navigate("/");
+    }
+    setLoader(false);
+  }, [authStatus, navigate, authentication]);
 
-  return loader ? <h1>Loading...</h1> : <>{children}</>;
+  return loader ? <div className="text-center mt-10 text-lg">Loading...</div> : <>{children}</>;
 }

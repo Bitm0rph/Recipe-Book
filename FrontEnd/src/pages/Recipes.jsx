@@ -19,16 +19,22 @@ export default function Recipes() {
     const fetchRecipes = async () => {
       setLoading(true);
       try {
-        const res = await API.get("/recipes"); // ensure endpoint is correct
-        const data = res.data.data || [];      // default to empty array
+        const recipesData = await getRecipes();
+        const data = Array.isArray(recipesData) ? recipesData : (recipesData?.data || []);
         setRecipes(data);
+        try {
+          const favsData = await getFavorites();
+          setFavorites(Array.isArray(favsData) ? favsData.map((f) => f._id || f) : []);
+        } catch (favErr) {
+          console.error("Failed to load favorites", favErr);
+        }
         setError(null);
       } catch (err) {
         console.error(err);
         setRecipes([]);
         setError("Failed to load recipes");
       } finally {
-        setLoading(false); // ✅ make sure loading is always set to false
+        setLoading(false);
       }
     };
   

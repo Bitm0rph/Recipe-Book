@@ -14,17 +14,17 @@ function App() {
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
 
-      if (!token) {
+      if (!token || token === "undefined" || token === "null") {
         dispatch(logout());
         setLoading(false);
         return;
       }
 
       try {
-        const res = await API.get("/auth/me");
+        const res = await API.get("/users/auth/me");
 
         if (res.data && res.data.success) {
-          dispatch(login({ userData: res.data.user, token }));
+          dispatch(login({ userData: res.data.data, token }));
         } else {
           dispatch(logout());
         }

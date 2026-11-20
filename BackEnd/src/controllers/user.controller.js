@@ -23,49 +23,54 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 export const register = asyncHandler(async (req,res) => {
     const {username, email, password} = req.body
-    // console.log(username, email, password);
 
     if(
-        [username,email,password].some(field => field?.trim() === "") 
+        !username || !email || !password ||
+        [username,email,password].some(field => typeof field !== "string" || field.trim() === "") 
     ){
-        throw new ApiError(400, "All fields are required", )
+        throw new ApiError(400, "All fields (username, email, password) are required")
     }
     const existedUser = await User.findOne({
-        $or: [{username},{email}]
+        $or: [
+            { username: username.toLowerCase() },
+            { email: email.toLowerCase() }
+        ]
     })
 
     if(existedUser){
         throw new ApiError(409,"User with the username or email already exists")
     }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    let coverImageLocalPath;
+    let avatarLocalPath;
+    if(req.files && Array.isArray(req.files.avatar) && req.files.avatar.length > 0){
+        avatarLocalPath = req.files.avatar[0].path;
+    }
 
+    let coverImageLocalPath;
     if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
         coverImageLocalPath = req.files.coverImage[0].path;
     }
-    if(!avatarLocalPath) {
-        throw new ApiError(400,"Avatar is required")
+
+    let avatar;
+    if(avatarLocalPath) {
+        avatar = await uploadOnCloudinary(avatarLocalPath)
     }
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
 
     let coverImage;
     if(coverImageLocalPath){
         coverImage = await uploadOnCloudinary(coverImageLocalPath)
     }
 
-    if(!avatar) {
-        throw new ApiError(500,"Server failed to upload the avatar")
-    }
-
     // Creating the user
     const user = await User.create({
         username: username.toLowerCase(),
-        email,
-        avatar: avatar.url,
+        email: email.toLowerCase(),
+        avatar: avatar?.url || "",
         coverImage: coverImage?.url || "",
         password
     })
+
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
 
     // check if the user is created successfully
     const createdUser = await User.findById(user._id).select(
@@ -76,8 +81,26 @@ export const register = asyncHandler(async (req,res) => {
         throw new ApiError(500,"Internal server error")
     }
 
-    return res.status(201).json(
-        new ApiResponse(200,createdUser,"User registered successfully")
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax"
+    }
+
+    return res
+    .status(201)
+    .cookie("accessToken",accessToken,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json(
+        new ApiResponse(
+            200,
+            {
+                user: createdUser,
+                accessToken,
+                refreshToken
+            },
+            "User registered successfully"
+        )
     )
 })
 
@@ -88,8 +111,15 @@ export const login = asyncHandler(async (req,res) => {
         throw new ApiError(400,"username or email is required")
     }
 
+    if(!password){
+        throw new ApiError(400,"password is required")
+    }
+
     const user = await User.findOne({
-        $or: [{username},{email}]
+        $or: [
+            ...(username ? [{ username: username.toLowerCase() }] : []),
+            ...(email ? [{ email: email.toLowerCase() }] : [])
+        ]
     })
     if(!user) {
         throw new ApiError(404, "User does not exist")
@@ -98,7 +128,7 @@ export const login = asyncHandler(async (req,res) => {
     const isPasswordCorrect = await user.isPasswordCorrect(password)
 
     if(!isPasswordCorrect){
-        throw new ApiError(401,"Password in invalid")
+        throw new ApiError(401,"Password is invalid")
     }
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
@@ -109,7 +139,8 @@ export const login = asyncHandler(async (req,res) => {
     // It will ensure that the cookies are only modifiable in the server and others can only read them in the browser
     const options = {
         httpOnly: true,
-        secure: true
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax"
     }
 
     return res
@@ -147,7 +178,8 @@ export const logout = asyncHandler(async (req,res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax"
     }
 
     return res
@@ -178,11 +210,12 @@ export const refreshAccessToken = asyncHandler(async (req,res) => {
             throw new ApiError(401,"Refresh token is expired")
         }
     
-        const {newAccessToken, newRefreshToken} = await generateAccessAndRefreshToken(user._id)
+        const {accessToken: newAccessToken, refreshToken: newRefreshToken} = await generateAccessAndRefreshToken(user._id)
     
         const options = {
             httpOnly: true,
-            secure: true
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax"
         }
     
         return res
@@ -259,7 +292,7 @@ export const updateAvatar = asyncHandler(async (req,res) => {
     }
     const avatar = await uploadOnCloudinary(avatarLocalPath);
 
-    if(!avatar.url){
+    if(!avatar?.url){
         throw new ApiError(400,"Error while uploading updated avatar")
     }
 
@@ -285,7 +318,7 @@ export const updateCoverImage = asyncHandler(async (req,res) => {
     }
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
-    if(!coverImage.url){
+    if(!coverImage?.url){
         throw new ApiError(400,"Error while uploading updated CoverImage")
     }
 

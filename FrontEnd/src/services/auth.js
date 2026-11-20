@@ -23,11 +23,19 @@ export const login = async (email, password) => {
 
 export const logout = () => {
   localStorage.removeItem("token");
+  localStorage.removeItem("user");
 };
 
 export const getCurrentUser = async () => {
-  // optional: you can implement /auth/me route in backend
   const token = localStorage.getItem("token");
-  if (!token) return null;
-  return true; // just a placeholder
+  if (!token || token === "undefined" || token === "null") return null;
+  try {
+    const res = await API.get("/users/auth/me");
+    if (res.data?.success) {
+      return res.data.data;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 };

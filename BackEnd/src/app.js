@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser"
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN === "*" ? true : (process.env.CORS_ORIGIN || true),
     credentials: true
 }));
 
@@ -30,5 +30,17 @@ app.use("/api/v1/recipes",recipeRoutes)
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/favorites", favoritesRoutes);
 
+// Global error handling middleware
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal server error";
+    return res.status(statusCode).json({
+        statusCode,
+        data: null,
+        message,
+        success: false,
+        errors: err.errors || []
+    });
+});
 
 export {app}
