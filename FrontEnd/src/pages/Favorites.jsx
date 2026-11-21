@@ -59,7 +59,7 @@ export default function Favorites() {
                 {r.description?.length > 100 ? `${r.description.slice(0, 100)}...` : r.description}
               </p>
               <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
-                <span className="inline-flex items-center gap-1"><FaEye /> {r.views ?? 0} views</span>
+                <span className="inline-flex items-center gap-1"><FaEye /> {r.views?.length ?? 0} views</span>
                 <span className="inline-flex items-center gap-1"><FaHeart /> {r.favorites?.length ?? 0} likes</span>
               </div>
             </div>

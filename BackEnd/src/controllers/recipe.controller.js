@@ -1,4 +1,5 @@
 import Recipe from '../models/recipe.model.js';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 
 export const getUserRecipes = async (req, res) => {
@@ -40,7 +41,7 @@ export const getRecipeById = async (req, res) => {
             ? existingRecipe
             : await Recipe.findByIdAndUpdate(
                 req.params.id,
-                { $inc: { views: 1 } },
+                { $addToSet: { views: req.user._id } },
                 { new: true }
             );
 
@@ -55,13 +56,27 @@ export const getRecipeById = async (req, res) => {
 
 export const createRecipe = async (req, res) => {
     try {
-        const { title, description, ingredients, steps, imageUrl, tags } = req.body;
+        const { title, description } = req.body;
+        const parseArray = (value) => Array.isArray(value) ? value : JSON.parse(value || "[]");
+        const tags = parseArray(req.body.tags);
+        const ingredients = parseArray(req.body.ingredients);
+        const steps = parseArray(req.body.steps);
+        let imageUrl = req.body.imageUrl || "";
+
+        if (req.file) {
+            const uploadedImage = await uploadOnCloudinary(req.file.path);
+            if (!uploadedImage) {
+                return res.status(502).json({ message: "Recipe image upload failed" });
+            }
+            imageUrl = uploadedImage.secure_url || uploadedImage.url;
+        }
+
         const recipe = new Recipe({ title, description, ingredients, steps, imageUrl, tags, author: req.user._id });
         await recipe.save();
         res.status(201).json(recipe);
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server error');
+        res.status(err.statusCode || 500).json({ message: err.statusCode ? err.message : 'Server error' });
     }
 }
 

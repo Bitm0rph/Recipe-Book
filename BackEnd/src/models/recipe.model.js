@@ -27,10 +27,12 @@ const recipeSchema = new Schema({
         type: String,
         required: true
     },
-    views: {
-        type: Number,
-        default: 0
-    },
+    views: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User',

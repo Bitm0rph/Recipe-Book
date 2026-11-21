@@ -1,7 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getCategoryById } from "../services/categories";
-import { getRecipesByCategory } from "../services/recipes";
 
 export default function CategoryDetail() {
   const { id } = useParams(); // category Mongo _id
@@ -14,11 +13,10 @@ export default function CategoryDetail() {
     setLoading(true);
 
     getCategoryById(id)
-      .then((cat) => {
-        setCategoryName(cat.name);
-        return getRecipesByCategory(id);
+      .then(({ category, recipes }) => {
+        setCategoryName(category.name);
+        setRecipes(recipes);
       })
-      .then((res) => setRecipes(res))
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
   }, [id]);

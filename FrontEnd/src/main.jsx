@@ -16,7 +16,7 @@ import RecipeDetail from './pages/RecipeDetail.jsx';
 import CategoryDetail from './pages/CategoryDetail.jsx';
 import About from './components/AboutUs.jsx';
 import Contact from './components/ContactUs.jsx';
-import PrivacyPolicy from './components/PrivacyPolicy.jsx';
+import DataNotice from './components/DataNotice.jsx';
 import TermsOfService from './components/TermsOfService.jsx';
 
 
@@ -100,7 +100,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/privacy",
-                element: <PrivacyPolicy />
+                element: <DataNotice />
             },
             {
                 path: "/terms",

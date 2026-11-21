@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { FaEye, FaHeart, FaVideo } from "react-icons/fa";
+import { FaEye, FaHeart } from "react-icons/fa";
 import { getRecipe } from "../services/recipes";
 
 export default function RecipeDetail() {
@@ -21,44 +21,60 @@ export default function RecipeDetail() {
   if (error) return <div className="p-4 text-red-500">Error loading recipe</div>;
   if (!recipe) return <div className="p-4 text-red-500">Recipe not found.</div>;
 
+  const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+  const steps = Array.isArray(recipe.steps) ? recipe.steps : [];
+
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      {recipe.image && (
+      {recipe.imageUrl && (
         <img
-          src={recipe.image}
+          src={recipe.imageUrl}
           alt={recipe.title}
           className="w-full max-h-96 object-cover rounded-lg mb-4"
         />
       )}
       <h1 className="text-3xl font-bold mb-2 text-center">{recipe.title}</h1>
       <div className="mb-4 flex justify-center items-center gap-4 text-sm text-gray-600">
-        <span className="inline-flex items-center gap-1"><FaEye /> {recipe.views ?? 0} views</span>
+        <span className="inline-flex items-center gap-1"><FaEye /> {recipe.views?.length ?? 0} views</span>
         <span className="inline-flex items-center gap-1"><FaHeart /> {recipe.favorites?.length ?? 0} likes</span>
       </div>
 
-      {recipe.category && (
-        <span className="inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded mb-4">
-          {recipe.category}
-        </span>
+      {recipe.tags?.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {recipe.tags.map((tag) => (
+            <span key={tag} className="rounded-full bg-indigo-100 px-3 py-1 text-sm text-indigo-800">
+              {tag}
+            </span>
+          ))}
+        </div>
       )}
 
-      {recipe.video && (
-        <a
-          href={recipe.video}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center text-indigo-600 hover:underline text-sm my-2"
-        >
-          <FaVideo className="mr-1" />
-          Watch Video
-        </a>
+      <p className="mb-6 text-gray-700">{recipe.description}</p>
+
+      <h2 className="text-2xl font-medium mt-4">Ingredients</h2>
+      {ingredients.length > 0 ? (
+        <ul className="mb-6 list-disc list-inside space-y-2 rounded bg-gray-100 p-4">
+          {ingredients.map((ingredient, index) => (
+            <li key={`${ingredient.name}-${index}`}>
+              {ingredient.name}
+              {ingredient.quantity && ` — ${ingredient.quantity}`}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mb-6 text-gray-600">No ingredients listed.</p>
       )}
 
-      <h3 className="text-2xl font-medium mt-4">Ingredients</h3>
-      <p className="mb-3 bg-gray-200 p-2 rounded">{recipe.ingredients}</p>
-
-      <h3 className="text-2xl font-medium mt-3">Recipe</h3>
-      <p className="text-gray-700 whitespace-pre-line mb-4">{recipe.content}</p>
+      <h2 className="text-2xl font-medium mt-4">Instructions</h2>
+      {steps.length > 0 ? (
+        <ol className="mb-4 list-decimal list-inside space-y-3">
+          {steps.map((step, index) => (
+            <li key={`${index}-${step}`} className="text-gray-700">{step}</li>
+          ))}
+        </ol>
+      ) : (
+        <p className="mb-4 text-gray-600">No instructions listed.</p>
+      )}
     </div>
   );
 }

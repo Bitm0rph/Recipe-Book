@@ -1,6 +1,7 @@
 import express from 'express';
 import { createRecipe, deleteRecipe, getAllRecipes, getRecipeById, getUserRecipes, updateRecipe } from '../controllers/recipe.controller.js';
 import { verifyJWT as auth } from '../middlewares/auth.middleware.js';
+import { upload } from '../middlewares/multer.middleware.js';
 
 
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get('/:id', auth, getRecipeById);
 
 
 // create recipe (protected)
-router.post('/', auth, createRecipe);
+router.post('/', auth, upload.single('image'), createRecipe);
 
 
 // update (Only the user who have created the recipe can update it)

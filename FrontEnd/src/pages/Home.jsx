@@ -88,7 +88,7 @@ export default function Home() {
                   </p>
                   <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
                     <span className="inline-flex items-center gap-1">
-                      <FaEye /> {recipe.views ?? 0} views
+                      <FaEye /> {recipe.views?.length ?? 0} views
                     </span>
                     <span className="inline-flex items-center gap-1">
                       <FaHeart /> {recipe.favorites?.length ?? 0} likes

@@ -1,5 +1,6 @@
 // src/components/Footer.jsx
 import { Link } from 'react-router-dom';
+import { FaUtensils } from 'react-icons/fa';
 
 export default function Footer() {
   return (
@@ -7,13 +8,9 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Branding */}
         <div className="col-span-1 flex items-center">
-          <Link to="/" className="flex items-center ">
-            <img
-              src="https://alexharkness.com/wp-content/uploads/2020/06/logo-2.png"
-              alt="Logo"
-              className="h-10"
-            />
-            <span className="ml-3 font-bold text-xl text-gray-800">Recipe Book</span>
+          <Link to="/" className="flex items-center gap-3 text-gray-800">
+            <FaUtensils className="text-2xl text-blue-600" aria-hidden="true" />
+            <span className="font-bold text-xl">Recipe Book</span>
           </Link>
         </div>
 

@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import Container from "../container/container";
 import LogoutBtn from "./Logout";
 import { useSelector } from "react-redux";
+import { FaUtensils } from "react-icons/fa";
 
 export default function Header() {
   const authStatus = useSelector((state) => state.auth.status)
@@ -46,12 +47,9 @@ return (
     <Container>
       <nav className="flex items-center py-4 justify-center space-x-8">
         {/* Logo */}
-        <Link to="/" className="flex-shrink-0 absolute left-4">
-          <img
-            src="https://alexharkness.com/wp-content/uploads/2020/06/logo-2.png"
-            alt="Logo"
-            className="h-10"
-          />
+        <Link to="/" className="flex-shrink-0 absolute left-4 flex items-center gap-2 text-gray-800">
+          <FaUtensils className="text-xl text-blue-600" aria-hidden="true" />
+          <span className="font-bold">Recipe Book</span>
         </Link>
 
         {/* Navigation items */}

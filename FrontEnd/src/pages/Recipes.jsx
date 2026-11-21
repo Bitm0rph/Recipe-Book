@@ -9,7 +9,10 @@ export default function Recipes() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newRecipe, setNewRecipe] = useState({ title: "", description: "", imageUrl: "", tags: "", ingredients: "", steps: "" });
+  const [newRecipe, setNewRecipe] = useState({ title: "", description: "", tags: "", ingredients: "", steps: "" });
+  const [imageFile, setImageFile] = useState(null);
+  const [imageInputKey, setImageInputKey] = useState(0);
+  const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
 
   const navigate = useNavigate();
@@ -70,6 +73,7 @@ export default function Recipes() {
     if (!newRecipe.title || !newRecipe.description) return;
     try {
       setAdding(true);
+      setAddError("");
       // Parse ingredients string "name:quantity, name2:quantity2"
       const ingredientsArray = newRecipe.ingredients
         ? newRecipe.ingredients.split(',').map(pair => {
@@ -86,12 +90,16 @@ export default function Recipes() {
         tags: newRecipe.tags.split(',').map(t => t.trim()),
         ingredients: ingredientsArray,
         steps: stepsArray,
+        image: imageFile,
       });
       setRecipes(prev => [created, ...prev]);
       // Clear all fields after adding
-      setNewRecipe({ title: "", description: "", imageUrl: "", tags: "", ingredients: "", steps: "" });
+      setNewRecipe({ title: "", description: "", tags: "", ingredients: "", steps: "" });
+      setImageFile(null);
+      setImageInputKey((key) => key + 1);
     } catch (err) {
       console.error("Failed to add recipe", err);
+      setAddError(err.response?.data?.message || "Failed to add recipe.");
     } finally {
       setAdding(false);
     }
@@ -127,6 +135,16 @@ export default function Recipes() {
           value={newRecipe.tags}
           onChange={(e) => setNewRecipe({ ...newRecipe, tags: e.target.value })}
         />
+        <label className="flex-1 border p-2 rounded text-gray-600">
+          <span className="block mb-1">Recipe image (optional)</span>
+          <input
+            key={imageInputKey}
+            type="file"
+            accept="image/*"
+            className="w-full"
+            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+          />
+        </label>
         {/* Ingredients (comma separated) */}
         <textarea
           placeholder="Ingredients (name:quantity, separate by commas)"
@@ -151,6 +169,7 @@ export default function Recipes() {
           <FaPlus /> {adding ? "Adding..." : "Add Recipe"}
         </button>
       </div>
+      {addError && <p className="mb-6 text-red-600" role="alert">{addError}</p>}
 
       {/* Recipe cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -177,7 +196,7 @@ export default function Recipes() {
                   {r.description?.length > 100 ? `${r.description.slice(0, 100)}...` : r.description}
                 </p>
                 <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
-                  <span className="inline-flex items-center gap-1"><FaEye /> {r.views ?? 0} views</span>
+                  <span className="inline-flex items-center gap-1"><FaEye /> {r.views?.length ?? 0} views</span>
                   <span className="inline-flex items-center gap-1"><FaHeart /> {r.favoriteCount ?? r.favorites?.length ?? 0} likes</span>
                 </div>
               </div>

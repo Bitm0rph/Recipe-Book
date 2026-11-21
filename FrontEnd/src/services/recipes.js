@@ -1,13 +1,21 @@
 import API from "../api";
 
+const recipeRequests = new Map();
+
 export const getAllRecipes = async (page = 1, limit = 20) => {
   const res = await API.get(`/recipes?page=${page}&limit=${limit}`);
   return res.data;
 };
 
-export const getRecipe = async (id) => {
-  const res = await API.get(`/recipes/${id}`);
-  return res.data;
+export const getRecipe = (id) => {
+  let request = recipeRequests.get(id);
+  if (!request) {
+    request = API.get(`/recipes/${id}`)
+      .then((res) => res.data)
+      .finally(() => recipeRequests.delete(id));
+    recipeRequests.set(id, request);
+  }
+  return request;
 };
 
 export const getRecipes = async () => {
@@ -16,7 +24,15 @@ export const getRecipes = async () => {
 };
 
 export const createRecipe = async (recipeData) => {
-  const res = await API.post("/recipes", recipeData);
+  const formData = new FormData();
+  const { image, ...fields } = recipeData;
+
+  Object.entries(fields).forEach(([key, value]) => {
+    formData.append(key, Array.isArray(value) ? JSON.stringify(value) : value);
+  });
+  if (image) formData.append("image", image);
+
+  const res = await API.post("/recipes", formData);
   return res.data;
 };
 
