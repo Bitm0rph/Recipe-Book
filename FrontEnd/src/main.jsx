@@ -6,6 +6,7 @@ import Home from './pages/Home.jsx'
 import Favorites from './pages/Favorites.jsx'
 import Categories from './pages/Categories.jsx'
 import MyRecipes from './pages/MyRecipes.jsx'
+import MealPlanner from './pages/MealPlanner.jsx'
 import Login from './components/Login.jsx'
 import Signup from './components/Signup.jsx'
 import { Provider } from 'react-redux';
@@ -51,6 +52,14 @@ const router = createBrowserRouter([
                     <AuthLayout authentication>
                         {" "}
                         <MyRecipes />
+                    </AuthLayout>
+                ),
+            },
+            {
+                path: "/meal-planner",
+                element: (
+                    <AuthLayout authentication>
+                        <MealPlanner />
                     </AuthLayout>
                 ),
             },

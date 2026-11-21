@@ -30,6 +30,11 @@ export default function Header() {
       active: authStatus
     },
     {
+      name: "Meal Planner",
+      to: "/meal-planner",
+      active: authStatus
+    },
+    {
       name: "Categories",
       to: "/categories",
       active: authStatus

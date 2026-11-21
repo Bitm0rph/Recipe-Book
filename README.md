@@ -24,7 +24,7 @@ BackEnd/
 FrontEnd/
   src/
     components/    Shared UI
-    pages/         Home, My Recipes, categories, favorites, and details
+    pages/         Home, My Recipes, meal planner, categories, favorites, and details
     services/      API calls
     store/         Redux store and authentication state
 ```
@@ -93,6 +93,8 @@ All API routes are prefixed with `/api/v1`.
 
 Recipe tags are synchronized into the categories collection when recipes are created and when the category list is requested. This also fills categories from existing recipes.
 
+The authenticated Meal Planner stores weekly recipe schedules and shopping lists per user. Generated shopping lists group matching ingredient names while keeping the recipe quantities as written; see [MEAL_PLANNER_README.md](./MEAL_PLANNER_README.md) for usage and implementation details.
+
 | Method | Endpoint | Authentication | Description |
 | --- | --- | --- | --- |
 | `POST` | `/users/register` | No | Register with `username`, `email`, and `password`; optional `avatar` and `coverImage` files |
@@ -114,6 +116,14 @@ Recipe tags are synchronized into the categories collection when recipes are cre
 | `GET` | `/favorites` | Yes | List the current user's favorites |
 | `POST` | `/favorites/:recipeId` | Yes | Add a recipe to favorites |
 | `DELETE` | `/favorites/:recipeId` | Yes | Remove a recipe from favorites |
+| `GET` | `/meal-plans?start=YYYY-MM-DD&end=YYYY-MM-DD` | Yes | Get the current user's planned meals in a date range |
+| `POST` | `/meal-plans` | Yes | Add a recipe to a date and meal slot |
+| `DELETE` | `/meal-plans/:id` | Yes | Remove a planned meal |
+| `GET` | `/shopping-list/:weekStart` | Yes | Get the current user's shopping list for a week |
+| `POST` | `/shopping-list/:weekStart/generate` | Yes | Build or refresh the list from that week's planned recipes |
+| `POST` | `/shopping-list/:weekStart/items` | Yes | Add a custom shopping item |
+| `PATCH` | `/shopping-list/:weekStart/items/:itemId` | Yes | Edit an item or mark it purchased |
+| `DELETE` | `/shopping-list/:weekStart/items/:itemId` | Yes | Remove an item |
 
 For authenticated requests, send the access token as `Authorization: Bearer <token>` or use the authentication cookie.
 
