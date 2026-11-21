@@ -7,6 +7,7 @@ import { upload } from '../middlewares/multer.middleware.js';
 const router = express.Router();
 
 // get recipes by user
+router.get('/mine', auth, getUserRecipes);
 router.get('/user/:userId', auth, getUserRecipes);
 
 
@@ -23,7 +24,7 @@ router.post('/', auth, upload.single('image'), createRecipe);
 
 
 // update (Only the user who have created the recipe can update it)
-router.put('/:id', auth, updateRecipe);
+router.put('/:id', auth, upload.single('image'), updateRecipe);
 
 
 // delete (Only the user who have created the recipe can delete it)

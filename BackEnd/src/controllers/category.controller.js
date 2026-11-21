@@ -1,9 +1,12 @@
 import Category from '../models/category.model.js';
 import Recipe from '../models/recipe.model.js';
+import { ensureCategoriesExist } from '../utils/category.js';
 
 
 export const getAllCategories = async (req, res) => {
   try {
+    const recipeTags = await Recipe.distinct('tags');
+    await ensureCategoriesExist(recipeTags);
     const categories = await Category.find().sort({ name: 1 });
     res.json({ data: categories });
   } catch (err) {

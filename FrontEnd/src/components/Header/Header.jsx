@@ -1,7 +1,7 @@
 // src/components/Header.jsx
 import { Link, NavLink } from "react-router-dom";
 import Container from "../container/container";
-import LogoutBtn from "./Logout";
+import ProfileMenu from "./ProfileMenu";
 import { useSelector } from "react-redux";
 import { FaUtensils } from "react-icons/fa";
 
@@ -25,8 +25,8 @@ export default function Header() {
       active: !authStatus
     },
     {
-      name: "Recipes",
-      to: "/recipes",
+      name: "My Recipes",
+      to: "/myRecipes",
       active: authStatus
     },
     {
@@ -77,9 +77,7 @@ return (
 
         {/* Auth/logout */}
         <div className="flex items-center space-x-4">
-            {authStatus && (
-                <LogoutBtn />
-            )}
+          {authStatus && <ProfileMenu />}
         </div>
       </nav>
     </Container>

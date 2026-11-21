@@ -1,10 +1,13 @@
 import Recipe from '../models/recipe.model.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
+import { ensureCategoriesExist } from '../utils/category.js';
+
+const parseArray = (value) => Array.isArray(value) ? value : JSON.parse(value || "[]");
 
 
 export const getUserRecipes = async (req, res) => {
     try {
-        const recipes = await Recipe.find({ author: req.params.userId }).populate('author', 'username email');
+        const recipes = await Recipe.find({ author: req.user._id }).populate('author', 'username email');
         res.json(recipes);
     } catch (err) {
         console.error(err);
@@ -57,7 +60,6 @@ export const getRecipeById = async (req, res) => {
 export const createRecipe = async (req, res) => {
     try {
         const { title, description } = req.body;
-        const parseArray = (value) => Array.isArray(value) ? value : JSON.parse(value || "[]");
         const tags = parseArray(req.body.tags);
         const ingredients = parseArray(req.body.ingredients);
         const steps = parseArray(req.body.steps);
@@ -72,6 +74,8 @@ export const createRecipe = async (req, res) => {
         }
 
         const recipe = new Recipe({ title, description, ingredients, steps, imageUrl, tags, author: req.user._id });
+        await recipe.validate();
+        await ensureCategoriesExist(tags);
         await recipe.save();
         res.status(201).json(recipe);
     } catch (err) {
@@ -84,16 +88,34 @@ export const updateRecipe = async (req, res) => {
     try {
         const recipe = await Recipe.findById(req.params.id);
         if (!recipe) return res.status(404).json({ message: 'Not found' });
-        if (recipe.author.toString() !== req.user.id) return res.status(403).json({ message: 'Unauthorized' });
+        if (recipe.author.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
 
+        const updates = {};
+        if (req.body.title !== undefined) updates.title = req.body.title;
+        if (req.body.description !== undefined) updates.description = req.body.description;
+        if (req.body.tags !== undefined) updates.tags = parseArray(req.body.tags);
+        if (req.body.ingredients !== undefined) updates.ingredients = parseArray(req.body.ingredients);
+        if (req.body.steps !== undefined) updates.steps = parseArray(req.body.steps);
+        if (req.body.imageUrl !== undefined) updates.imageUrl = req.body.imageUrl;
 
-        const updates = req.body;
-        updates.updatedAt = new Date();
-        const updated = await Recipe.findByIdAndUpdate(req.params.id, updates, { new: true });
-        res.json(updated);
+        if (req.file) {
+            const uploadedImage = await uploadOnCloudinary(req.file.path);
+            if (!uploadedImage) {
+                return res.status(502).json({ message: "Recipe image upload failed" });
+            }
+            updates.imageUrl = uploadedImage.secure_url || uploadedImage.url;
+        }
+
+        recipe.set(updates);
+        await recipe.validate();
+        if (updates.tags) await ensureCategoriesExist(updates.tags);
+        await recipe.save();
+        res.json(recipe);
     } catch (err) {
         console.error(err);
-        res.status(500).send('Server error');
+        res.status(err.statusCode || 500).json({ message: err.statusCode ? err.message : 'Server error' });
     }
 }
 
@@ -101,7 +123,9 @@ export const deleteRecipe = async (req, res) => {
     try {
         const recipe = await Recipe.findById(req.params.id);
         if (!recipe) return res.status(404).json({ message: 'Not found' });
-        if (recipe.author.toString() !== req.user.id) return res.status(403).json({ message: 'Unauthorized' });
+        if (recipe.author.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
 
 
         await recipe.deleteOne();

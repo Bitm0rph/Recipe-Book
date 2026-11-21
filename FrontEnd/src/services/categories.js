@@ -2,7 +2,7 @@ import API from "../api";
 
 export const getCategories = async () => {
     const res = await API.get("/categories");
-    return res.data; // should be an array of categories
+    return res.data.data || res.data;
 };
 
 export const getCategoryById = async (id) => {

@@ -1,11 +1,11 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Navigate, RouterProvider, createBrowserRouter } from "react-router-dom";
 import './index.css'
 import Home from './pages/Home.jsx'
 import Favorites from './pages/Favorites.jsx'
 import Categories from './pages/Categories.jsx'
-import Recipes from './pages/Recipes.jsx'
+import MyRecipes from './pages/MyRecipes.jsx'
 import Login from './components/Login.jsx'
 import Signup from './components/Signup.jsx'
 import { Provider } from 'react-redux';
@@ -46,13 +46,17 @@ const router = createBrowserRouter([
                 ),
             },
             {
-                path: "/recipes",
+                path: "/myRecipes",
                 element: (
                     <AuthLayout authentication>
                         {" "}
-                        <Recipes />
+                        <MyRecipes />
                     </AuthLayout>
                 ),
+            },
+            {
+                path: "/recipes",
+                element: <Navigate to="/myRecipes" replace />,
             },
             {
                 path: "/favorites",

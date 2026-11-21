@@ -24,7 +24,7 @@ BackEnd/
 FrontEnd/
   src/
     components/    Shared UI
-    pages/         Home, recipes, categories, favorites, and details
+    pages/         Home, My Recipes, categories, favorites, and details
     services/      API calls
     store/         Redux store and authentication state
 ```
@@ -91,6 +91,8 @@ Open [http://localhost:5173](http://localhost:5173). The backend listens on port
 
 All API routes are prefixed with `/api/v1`.
 
+Recipe tags are synchronized into the categories collection when recipes are created and when the category list is requested. This also fills categories from existing recipes.
+
 | Method | Endpoint | Authentication | Description |
 | --- | --- | --- | --- |
 | `POST` | `/users/register` | No | Register with `username`, `email`, and `password`; optional `avatar` and `coverImage` files |
@@ -100,7 +102,7 @@ All API routes are prefixed with `/api/v1`.
 | `POST` | `/users/refresh-token` | Refresh token | Refresh the access token |
 | `GET` | `/recipes?page=1&limit=20` | No | Get paginated recipe previews |
 | `GET` | `/recipes/:id` | Yes | Get full recipe details |
-| `GET` | `/recipes/user/:userId` | Yes | Get a user's recipes |
+| `GET` | `/recipes/mine` | Yes | Get recipes created by the current user |
 | `POST` | `/recipes` | Yes | Create a recipe; optional image file field is `image` |
 | `PUT` | `/recipes/:id` | Yes | Update a recipe owned by the current user |
 | `DELETE` | `/recipes/:id` | Yes | Delete a recipe owned by the current user |

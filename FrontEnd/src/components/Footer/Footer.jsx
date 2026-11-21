@@ -18,7 +18,7 @@ export default function Footer() {
         <div className="col-span-1">
           <h3 className="text-gray-800 font-semibold mb-2 uppercase text-sm">Explore</h3>
           <ul className="space-y-1 text-gray-600 text-sm">
-            <li><Link to="/recipes"    className="hover:text-gray-800">Recipes</Link></li>
+            <li><Link to="/myRecipes"  className="hover:text-gray-800">My Recipes</Link></li>
             <li><Link to="/categories" className="hover:text-gray-800">Categories</Link></li>
             <li><Link to="/favorites"  className="hover:text-gray-800">Favorites</Link></li>
           </ul>
