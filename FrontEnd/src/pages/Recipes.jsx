@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHeart, FaRegHeart, FaPlus } from "react-icons/fa";
+import { FaEye, FaHeart, FaRegHeart, FaPlus } from "react-icons/fa";
 import { getRecipes, createRecipe } from "../services/recipes";
 import { getFavorites, addFavorite, removeFavorite } from "../services/favorites";
 
@@ -9,7 +9,7 @@ export default function Recipes() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newRecipe, setNewRecipe] = useState({ title: "", description: "", imageUrl: "", tags: "" });
+  const [newRecipe, setNewRecipe] = useState({ title: "", description: "", imageUrl: "", tags: "", ingredients: "", steps: "" });
   const [adding, setAdding] = useState(false);
 
   const navigate = useNavigate();
@@ -44,14 +44,23 @@ export default function Recipes() {
 
   const toggleFavorite = async (e, recipeId) => {
     e.stopPropagation();
+    const removingFavorite = favorites.includes(recipeId);
     try {
-      if (favorites.includes(recipeId)) {
+      if (removingFavorite) {
         await removeFavorite(recipeId);
         setFavorites((prev) => prev.filter((id) => id !== recipeId));
       } else {
         await addFavorite(recipeId);
         setFavorites((prev) => [...prev, recipeId]);
       }
+      setRecipes((prev) => prev.map((recipe) => {
+        if (recipe._id !== recipeId) return recipe;
+        const currentCount = recipe.favoriteCount ?? recipe.favorites?.length ?? 0;
+        return {
+          ...recipe,
+          favoriteCount: Math.max(0, currentCount + (removingFavorite ? -1 : 1)),
+        };
+      }));
     } catch (err) {
       console.error("Favorite toggle failed", err);
     }
@@ -61,14 +70,26 @@ export default function Recipes() {
     if (!newRecipe.title || !newRecipe.description) return;
     try {
       setAdding(true);
+      // Parse ingredients string "name:quantity, name2:quantity2"
+      const ingredientsArray = newRecipe.ingredients
+        ? newRecipe.ingredients.split(',').map(pair => {
+            const [name, quantity] = pair.split(':').map(s => s.trim());
+            return { name: name || '', quantity: quantity || '' };
+          })
+        : [];
+      // Parse steps string (one per line)
+      const stepsArray = newRecipe.steps
+        ? newRecipe.steps.split('\n').map(s => s.trim()).filter(Boolean)
+        : [];
       const created = await createRecipe({
         ...newRecipe,
-        tags: newRecipe.tags.split(",").map((t) => t.trim()),
-        ingredients: [{ name: "Ingredient 1", quantity: "1 unit" }], // minimal example
-        steps: ["Step 1"] // minimal example
+        tags: newRecipe.tags.split(',').map(t => t.trim()),
+        ingredients: ingredientsArray,
+        steps: stepsArray,
       });
-      setRecipes((prev) => [created, ...prev]);
-      setNewRecipe({ title: "", description: "", imageUrl: "", tags: "" });
+      setRecipes(prev => [created, ...prev]);
+      // Clear all fields after adding
+      setNewRecipe({ title: "", description: "", imageUrl: "", tags: "", ingredients: "", steps: "" });
     } catch (err) {
       console.error("Failed to add recipe", err);
     } finally {
@@ -106,6 +127,22 @@ export default function Recipes() {
           value={newRecipe.tags}
           onChange={(e) => setNewRecipe({ ...newRecipe, tags: e.target.value })}
         />
+        {/* Ingredients (comma separated) */}
+        <textarea
+          placeholder="Ingredients (name:quantity, separate by commas)"
+          className="border p-2 rounded flex-1"
+          rows={3}
+          value={newRecipe.ingredients}
+          onChange={(e) => setNewRecipe({ ...newRecipe, ingredients: e.target.value })}
+        />
+        {/* Steps (one per line) */}
+        <textarea
+          placeholder="Steps (one per line)"
+          className="border p-2 rounded flex-1"
+          rows={3}
+          value={newRecipe.steps}
+          onChange={(e) => setNewRecipe({ ...newRecipe, steps: e.target.value })}
+        />
         <button
           onClick={handleAddRecipe}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-2"
@@ -139,6 +176,10 @@ export default function Recipes() {
                 <p className="mt-2 text-gray-700 text-sm">
                   {r.description?.length > 100 ? `${r.description.slice(0, 100)}...` : r.description}
                 </p>
+                <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
+                  <span className="inline-flex items-center gap-1"><FaEye /> {r.views ?? 0} views</span>
+                  <span className="inline-flex items-center gap-1"><FaHeart /> {r.favoriteCount ?? r.favorites?.length ?? 0} likes</span>
+                </div>
               </div>
             </div>
           );

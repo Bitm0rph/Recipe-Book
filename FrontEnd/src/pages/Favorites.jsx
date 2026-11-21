@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaHeart } from "react-icons/fa";
+import { FaEye, FaHeart } from "react-icons/fa";
 import { getFavorites, removeFavorite } from "../services/favorites";
 
 export default function Favorites() {
@@ -58,6 +58,10 @@ export default function Favorites() {
               <p className="text-gray-700 text-sm mt-2">
                 {r.description?.length > 100 ? `${r.description.slice(0, 100)}...` : r.description}
               </p>
+              <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
+                <span className="inline-flex items-center gap-1"><FaEye /> {r.views ?? 0} views</span>
+                <span className="inline-flex items-center gap-1"><FaHeart /> {r.favorites?.length ?? 0} likes</span>
+              </div>
             </div>
           </div>
         ))}

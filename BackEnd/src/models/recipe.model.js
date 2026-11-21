@@ -17,7 +17,7 @@ const ingredientSchema = new Schema({
 const recipeSchema = new Schema({
     imageUrl: {
         type: String,
-        required: true
+        // required: true // made optional to allow recipes without image
     },
     title: {
         type: String,
@@ -31,16 +31,12 @@ const recipeSchema = new Schema({
         type: Number,
         default: 0
     },
-    isPublished: {
-        type: Boolean,
-        default: true
-    },
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    likes: [
+    favorites: [
         {
             type: Schema.Types.ObjectId,
             ref: 'User'
