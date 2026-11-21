@@ -1,101 +1,137 @@
 # Recipe Book
 
-**Recipe Book** is a React-based web application that lets users explore, search, and favorite various recipes. It uses Appwrite for backend services (authentication, database, storage), Tailwind CSS for styling and React Router for navigation.
+Recipe Book is a full-stack application for browsing recipes, creating and sharing recipes, organizing recipes by category, and managing favorites. The home page shows recipe previews publicly; signing in is required to view full recipe details and use account features.
 
----
+## Technology
 
-## 🚀 Features
+- **Frontend:** React, Vite, React Router, Redux Toolkit, Tailwind CSS
+- **Backend:** Node.js, Express
+- **Database:** MongoDB with Mongoose
+- **Authentication:** JWT access and refresh tokens
+- **Image uploads:** Multer and Cloudinary
 
-- **User Authentication**: Sign up, log in, and log out via Appwrite Accounts.
-- **Browse Recipes**: View all recipes in a responsive card grid.
-- **Recipe Details**: Click on the card to see full recipe information, including images, ingredients and optional video links.
-- **Favorites**: Mark recipes as favorites; view and manage your personal favorites list.
-- **Categories**: Browse categories and view recipes filtered by category.
-- **Legal & Info Pages**: About Us, Contact Us form, Privacy Policy, and Terms of Service.
+## Project structure
 
----
-
-## 📁 Folder Structure
-
-```plaintext
-src/
-├── appwrite/           # Appwrite service wrappers (config.js, auth.js)
-├── components/         # Reusable components (Header, Footer, container, etc.)
-├── conf/               # Configuration (conf.js reads from .env)
-├── pages/              # Route views (Home, Recipes, RecipeDetail, Categories, CategoryDetail, Favorites)
-├── store/              # Redux slices (authSlice, store)
-├── App.jsx             # Layout setup(Header, Outlet, Footer)
-└── main.jsx            # React DOM entry point and main router setup
+```text
+BackEnd/
+  src/
+    controllers/   Request handlers
+    DB/            MongoDB connection
+    middlewares/   Authentication and multipart uploads
+    models/        Mongoose schemas
+    routes/        Versioned API routes
+    utils/         API helpers and Cloudinary integration
+FrontEnd/
+  src/
+    components/    Shared UI
+    pages/         Home, recipes, categories, favorites, and details
+    services/      API calls
+    store/         Redux store and authentication state
 ```
 
----
+## Requirements
 
-## ⚙️ Setup & Installation
+- Node.js and npm
+- MongoDB running locally or a MongoDB Atlas connection string
+- Cloudinary credentials to upload recipe images, avatars, or cover images
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Bitm0rph/Recipe-Book.git
-   cd Recipe-Book
-   ```
+## Configuration
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
+Create `BackEnd/.env`:
 
-3. **Configure environment variables**:
-   Create a `.env` file in the project root
-   ```env
-    VITE_APPWRITE_URL="https://fra.cloud.appwrite.io/v1"
-    VITE_APPWRITE_PROJECT_ID="686a301f00321dd9cf0b"
-    VITE_APPWRITE_DATABASE_ID="686a3132002ba40583b0"
-    VITE_APPWRITE_COLLECTION_ID="686a316c003213180b82"
-    VITE_APPWRITE_FAVORITE_COLLECTION_ID="686d3356003c3a740a0d"
-    VITE_APPWRITE_CATEGORIES_COLLECTION_ID="686d5d27002ef28d00a2"
-    VITE_APPWRITE_BUCKET_ID="686a34240029fcc0e032"
-   ```
+```env
+PORT=3000
+MONGO_URI=mongodb://127.0.0.1:27017
+CORS_ORIGIN=http://localhost:5173
+NODE_ENV=development
 
-4. **Run development server**
-   ```bash
-   npm run dev   # or yarn dev
-   ```
+ACCESS_TOKEN_SECRET=replace-with-a-long-random-secret
+ACCESS_TOKEN_EXPIRY=1d
+REFRESH_TOKEN_SECRET=replace-with-another-long-random-secret
+REFRESH_TOKEN_EXPIRY=10d
 
-5. **Open in browser**:
-   Visit `http://localhost:5173`  to view the app.
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
 
----
+The backend selects the `RecipeBook` database. For MongoDB Atlas, set `MONGO_URI` to your Atlas connection string. Keep secrets private and do not commit `.env` files.
 
-## 🔗 Useful Scripts
+Cloudinary variables are needed for image uploads. Recipe images are optional.
 
-- `npm run dev` / `yarn dev`: Start Vite development server
-- `npm run build` / `yarn build`: Bundle for production
-- `npm run preview` / `yarn preview`: Preview production build
+Create `FrontEnd/.env`:
 
----
+```env
+VITE_API_URL=http://localhost:3000/api/v1
+```
 
-## 🛠 Appwrite Setup
+Restart Vite after changing frontend environment variables.
 
-1. **Create a Project** in Appwrite Console.
-2. **Enable Email/Password Authentication** under Accounts.
-3. **Create Database & Collections**:
-   - **Recipes** collection with attributes: `title`, `content`, `description`, `Category`, `Ingredients`, `image`, `video` with an index on `Category`.
-   - **Favorites** collection with attributes: `userId`, `recipeId` plus an index on `userId`.
-   - **Categories** collection with attribute: `name` containing an index.
-4. **Set Create, Read** and **Delete Permissions** when creating Favorites.
-5. Of course, **Recipes** and **Categories** will need **Read Permission**.
-   
-6. **Whitelist your origin** under **Settings → Web**.
+## Run locally
 
----
+Install and run the backend in one terminal:
 
-## 🤝 Contributing
+```bash
+cd BackEnd
+npm install
+npm start
+```
 
-Contributions are welcome! Feel free to open issues or pull requests to suggest improvements or new features.
+Install and run the frontend in another terminal:
 
----
+```bash
+cd FrontEnd
+npm install
+npm run dev
+```
 
-## 📄 License
+Open [http://localhost:5173](http://localhost:5173). The backend listens on port `3000` by default and connects to MongoDB before starting.
 
-This project is licensed under the MIT License.
+## Backend API
+
+All API routes are prefixed with `/api/v1`.
+
+| Method | Endpoint | Authentication | Description |
+| --- | --- | --- | --- |
+| `POST` | `/users/register` | No | Register with `username`, `email`, and `password`; optional `avatar` and `coverImage` files |
+| `POST` | `/users/login` | No | Log in with `email` or `username` and `password` |
+| `GET` | `/users/auth/me` | Yes | Get the current user |
+| `POST` | `/users/logout` | Yes | Log out |
+| `POST` | `/users/refresh-token` | Refresh token | Refresh the access token |
+| `GET` | `/recipes?page=1&limit=20` | No | Get paginated recipe previews |
+| `GET` | `/recipes/:id` | Yes | Get full recipe details |
+| `GET` | `/recipes/user/:userId` | Yes | Get a user's recipes |
+| `POST` | `/recipes` | Yes | Create a recipe; optional image file field is `image` |
+| `PUT` | `/recipes/:id` | Yes | Update a recipe owned by the current user |
+| `DELETE` | `/recipes/:id` | Yes | Delete a recipe owned by the current user |
+| `GET` | `/categories` | No | List categories |
+| `GET` | `/categories/:id` | No | Get a category and its recipe previews |
+| `POST` | `/categories` | Yes | Create a category |
+| `PUT` | `/categories/:id` | Yes | Update a category |
+| `DELETE` | `/categories/:id` | Yes | Delete a category |
+| `GET` | `/favorites` | Yes | List the current user's favorites |
+| `POST` | `/favorites/:recipeId` | Yes | Add a recipe to favorites |
+| `DELETE` | `/favorites/:recipeId` | Yes | Remove a recipe from favorites |
+
+For authenticated requests, send the access token as `Authorization: Bearer <token>` or use the authentication cookie.
+
+To create a recipe with Postman, use **Body → form-data**. Send `title`, `description`, and JSON-encoded `tags`, `ingredients`, and `steps` fields; optionally add an `image` field of type **File**. For example:
+
+```text
+tags: ["dinner"]
+ingredients: [{"name":"Rice","quantity":"1 cup"}]
+steps: ["Rinse the rice","Cook until tender"]
+```
+
+## Frontend scripts
+
+Run these commands from `FrontEnd/`:
+
+- `npm run dev` — start the Vite development server
+- `npm run build` — create a production build
+- `npm run preview` — preview the production build
+- `npm run lint` — run ESLint
+
+## Contributing
+
+Contributions are welcome. Open an issue or pull request with a clear description of the proposed change.
