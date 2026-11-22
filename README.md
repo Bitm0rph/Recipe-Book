@@ -53,11 +53,15 @@ REFRESH_TOKEN_EXPIRY=10d
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
+
+GEMINI_API_KEY=your-gemini-api-key
+GEMINI_MODEL=gemini-3.8-flash
 ```
 
 The backend selects the `RecipeBook` database. For MongoDB Atlas, set `MONGO_URI` to your Atlas connection string. Keep secrets private and do not commit `.env` files.
 
 Cloudinary variables are needed for image uploads. Recipe images are optional.
+The Pantry Assistant needs a Gemini API key. Keep it only in `BackEnd/.env`; never put it in `FrontEnd/.env` or commit it. The assistant sends the submitted pantry ingredients and preferences, plus candidate recipe titles and ingredient names, to Gemini using the Interactions API with request storage disabled. If Gemini 3.8 Flash is overloaded, the backend retries once with Gemini 3.7 Flash. Restart the backend after setting the key or changing the model.
 
 Create `FrontEnd/.env`:
 
@@ -124,6 +128,9 @@ The authenticated Meal Planner stores weekly recipe schedules and shopping lists
 | `POST` | `/shopping-list/:weekStart/items` | Yes | Add a custom shopping item |
 | `PATCH` | `/shopping-list/:weekStart/items/:itemId` | Yes | Edit an item or mark it purchased |
 | `DELETE` | `/shopping-list/:weekStart/items/:itemId` | Yes | Remove an item |
+| `POST` | `/ai/pantry-assistant/suggestions` | Yes | Get AI-ranked suggestions grounded in existing recipes |
+
+The Pantry Assistant request body is `{ "ingredients": ["spinach", "rice"], "preferences": "quick vegetarian dinner" }`. It returns recipes from the existing collection with likely matched and missing ingredient names. Gemini can recognize common ingredient-name variations; verify its matches and substitutions, which are not safe allergy or medical guidance.
 
 For authenticated requests, send the access token as `Authorization: Bearer <token>` or use the authentication cookie.
 

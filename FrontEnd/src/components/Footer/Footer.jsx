@@ -20,6 +20,7 @@ export default function Footer() {
           <ul className="space-y-1 text-gray-600 text-sm">
             <li><Link to="/myRecipes"  className="hover:text-gray-800">My Recipes</Link></li>
             <li><Link to="/meal-planner" className="hover:text-gray-800">Meal Planner</Link></li>
+            <li><Link to="/pantry-assistant" className="hover:text-gray-800">Pantry Assistant</Link></li>
             <li><Link to="/categories" className="hover:text-gray-800">Categories</Link></li>
             <li><Link to="/favorites"  className="hover:text-gray-800">Favorites</Link></li>
           </ul>

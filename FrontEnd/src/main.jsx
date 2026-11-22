@@ -7,6 +7,7 @@ import Favorites from './pages/Favorites.jsx'
 import Categories from './pages/Categories.jsx'
 import MyRecipes from './pages/MyRecipes.jsx'
 import MealPlanner from './pages/MealPlanner.jsx'
+import PantryAssistant from './pages/PantryAssistant.jsx'
 import Login from './components/Login.jsx'
 import Signup from './components/Signup.jsx'
 import { Provider } from 'react-redux';
@@ -60,6 +61,14 @@ const router = createBrowserRouter([
                 element: (
                     <AuthLayout authentication>
                         <MealPlanner />
+                    </AuthLayout>
+                ),
+            },
+            {
+                path: "/pantry-assistant",
+                element: (
+                    <AuthLayout authentication>
+                        <PantryAssistant />
                     </AuthLayout>
                 ),
             },

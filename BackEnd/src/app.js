@@ -25,6 +25,7 @@ import categoryRoutes from './routes/categories.routes.js';
 import favoritesRoutes from './routes/favorites.routes.js';
 import mealPlannerRoutes from './routes/mealPlanner.routes.js';
 import shoppingListRoutes from './routes/shoppingList.routes.js';
+import pantryAssistantRoutes from './routes/pantryAssistant.routes.js';
 
 // declaration of routes
 app.use("/api/v1/users",userRouter)
@@ -33,6 +34,7 @@ app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/favorites", favoritesRoutes);
 app.use("/api/v1/meal-plans", mealPlannerRoutes);
 app.use("/api/v1/shopping-list", shoppingListRoutes);
+app.use("/api/v1/ai/pantry-assistant", pantryAssistantRoutes);
 
 // Global error handling middleware
 app.use((err, req, res, next) => {

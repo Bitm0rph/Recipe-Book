@@ -35,6 +35,11 @@ export default function Header() {
       active: authStatus
     },
     {
+      name: "Pantry AI",
+      to: "/pantry-assistant",
+      active: authStatus
+    },
+    {
       name: "Categories",
       to: "/categories",
       active: authStatus
